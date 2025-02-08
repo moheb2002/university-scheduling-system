@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room & Lecture Management</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Add Room</h2>
+        <input type="text" id="room_name" placeholder="Room Name">
+        <input type="number" id="capacity" placeholder="Capacity">
+        <button onclick="addRoom()">Add Room</button>
+
+        <h2>Add Lecture</h2>
+        <div class="departments">
+            <label>
+                <input type="checkbox" id="department_it" value="IT"> IT
+            </label>
+            <label>
+                <input type="checkbox" id="department_business" value="Business"> Business
+            </label>
+        </div>
+
+        <input type="text" id="level" placeholder="Level">
+        <input type="text" id="group_name" placeholder="Group Name">
+        <input type="number" step="0.01" id="time" placeholder="Time (decimal format)">
+        <input type="number" id="student_count" placeholder="Student Count">
+
+        <select id="mode">
+            <option value="FTF">FTF (Face-to-Face)</option>
+            <option value="VCR">VCR (Virtual Classroom)</option>
+        </select>
+
+        <select id="day">
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+        </select>
+
+        <input type="text" id="subject_name" placeholder="Subject Name">
+        <button onclick="addLecture()">Add Lecture</button>
+
+        <br><br>
+        <button onclick="scheduleLectures()">Schedule Lectures</button>
+
+        <br><br>
+        <button onclick="clearSchedule()">Clear Schedule</button>
+        <br><br>
+        <button id="download-btn" type="button">Download Schedule as Excel</button>
+    </div>
+    
+    <script>
+        async function addRoom() {
+            const room_name = document.getElementById("room_name").value;
+            const capacity = document.getElementById("capacity").value;
+            await fetch("http://localhost:5000/add_room", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ room_name, capacity })
+            });
+            alert("Room added");
+        }
+
+        async function addLecture() {
+            const department = [];
+            if (document.getElementById("department_it").checked) {
+                department.push("IT");
+            }
+            if (document.getElementById("department_business").checked) {
+                department.push("Business");
+            }
+
+            const data = {
+                department: department.join(", "),
+                level: document.getElementById("level").value,
+                group_name: document.getElementById("group_name").value,
+                time: parseFloat(document.getElementById("time").value),
+                student_count: document.getElementById("student_count").value,
+                mode: document.getElementById("mode").value,
+                day: document.getElementById("day").value,
+                subject_name: document.getElementById("subject_name").value
+            };
+
+            await fetch("http://localhost:5000/add_lecture", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            alert("Lecture added");
+        }
+
+        async function scheduleLectures() {
+            const response = await fetch("http://localhost:5000/schedule_lectures", {
+                method: "POST"
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+            } else {
+                alert(result.error);
+            }
+        }
+
+        async function clearSchedule() {
+            const response = await fetch("http://localhost:5000/clear_schedule", {
+                method: "POST"
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+            } else {
+                alert(result.error);
+            }
+        }
+
+        document.getElementById("download-btn").addEventListener("click", function () {
+            window.location.href = "/download_schedule";
+        });
+    </script>
+</body>
+</html>

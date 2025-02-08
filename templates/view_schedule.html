@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Schedule</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Lecture Schedule</h2>
+        
+        <!-- Display schedule data in a table -->
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>Department</th>
+                    <th>Level</th>
+                    <th>Subject Name</th>
+                    <th>Group Name</th>
+                    <th>Time</th>
+                    <th>Mode</th>
+                    <th>Room Name</th>
+                    <th>Day</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in schedule_data %}
+                <tr>
+                    <td>{{ row[0] }}</td>  <!-- Department -->
+                    <td>{{ row[1] }}</td>  <!-- Level -->
+                    <td>{{ row[2] }}</td>  <!-- Subject Name -->
+                    <td>{{ row[3] }}</td>  <!-- Group Name -->
+                    <td>{{ row[4] }}</td>  <!-- Time -->
+                    <td>{{ row[5] }}</td>  <!-- Mode -->
+                    <td>{{ row[6] }}</td>  <!-- Room Name -->
+                    <td>{{ row[7] }}</td>  <!-- Day -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
